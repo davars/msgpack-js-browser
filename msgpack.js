@@ -27,9 +27,9 @@ function inspect(buffer) {
       bytes.push("...");
       break;
     }
-    var byte = view.getUint8(i).toString(16);
-    if (byte.length === 1) byte = "0" + byte;
-    bytes.push(byte);
+    var byte_ = view.getUint8(i).toString(16);
+    if (byte_.length === 1) byte_ = "0" + byte_;
+    bytes.push(byte_);
   }
   return "<" + type + " " + bytes.join(" ") + ">";
 }
@@ -41,7 +41,7 @@ function utf8Write(view, offset, string) {
   for(var i = 0, l = string.length; i < l; i++) {
     var codePoint = string.charCodeAt(i);
 
-    // One byte of UTF-8
+    // One byte_ of UTF-8
     if (codePoint < 0x80) {
       view.setUint8(offset++, codePoint >>> 0 & 0x7f | 0x00);
       continue;
@@ -78,46 +78,46 @@ exports.utf8Read = utf8Read;
 function utf8Read(view, offset, length) {
   var string = "";
   for (var i = offset, end = offset + length; i < end; i++) {
-    var byte = view.getUint8(i);
-    // One byte character
-    if ((byte & 0x80) === 0x00) {
-      string += String.fromCharCode(byte);
+    var byte_ = view.getUint8(i);
+    // One byte_ character
+    if ((byte_ & 0x80) === 0x00) {
+      string += String.fromCharCode(byte_);
       continue;
     }
-    // Two byte character
-    if ((byte & 0xe0) === 0xc0) {
+    // Two byte_ character
+    if ((byte_ & 0xe0) === 0xc0) {
       string += String.fromCharCode(
-        ((byte & 0x0f) << 6) | 
+        ((byte_ & 0x0f) << 6) | 
         (view.getUint8(++i) & 0x3f)
       );
       continue;
     }
-    // Three byte character
-    if ((byte & 0xf0) === 0xe0) {
+    // Three byte_ character
+    if ((byte_ & 0xf0) === 0xe0) {
       string += String.fromCharCode(
-        ((byte & 0x0f) << 12) |
+        ((byte_ & 0x0f) << 12) |
         ((view.getUint8(++i) & 0x3f) << 6) |
         ((view.getUint8(++i) & 0x3f) << 0)
       );
       continue;
     }
-    // Four byte character
-    if ((byte & 0xf8) === 0xf0) {
+    // Four byte_ character
+    if ((byte_ & 0xf8) === 0xf0) {
       string += String.fromCharCode(
-        ((byte & 0x07) << 18) |
+        ((byte_ & 0x07) << 18) |
         ((view.getUint8(++i) & 0x3f) << 12) |
         ((view.getUint8(++i) & 0x3f) << 6) |
         ((view.getUint8(++i) & 0x3f) << 0)
       );
       continue;
     }
-    throw new Error("Invalid byte " + byte.toString(16));
+    throw new Error("Invalid byte_ " + byte_.toString(16));
   }
   return string;
 }
 
-exports.utf8ByteCount = utf8ByteCount;
-function utf8ByteCount(string) {
+exports.utf8byteCount = utf8byteCount;
+function utf8byteCount(string) {
   var count = 0;
   for(var i = 0, l = string.length; i < l; i++) {
     var codePoint = string.charCodeAt(i);
@@ -338,9 +338,9 @@ function decode(buffer) {
 function encode(value, view, offset) {
   var type = typeof value;
 
-  // Strings Bytes
+  // Strings bytes
   if (type === "string") {
-    var length = utf8ByteCount(value);
+    var length = utf8byteCount(value);
     // fix str
     if (length < 0x20) {
       view.setUint8(offset, length | 0xa0);
@@ -526,9 +526,9 @@ function encode(value, view, offset) {
 function encodedSize(value) {
   var type = typeof value;
 
-  // Raw Bytes
+  // Raw bytes
   if (type === "string") {
-    var length = utf8ByteCount(value);
+    var length = utf8byteCount(value);
     if (length < 0x20) {
       return 1 + length;
     }
